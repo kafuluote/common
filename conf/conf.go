@@ -1,7 +1,7 @@
 package conf
 
 import (
-	"digicon/common/xtime"
+	"github.com/kafuluote/common/xtime"
 )
 
 type CommConf struct {
