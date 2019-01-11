@@ -86,6 +86,8 @@ type Redis struct {
 	ReadTimeout  xtime.Duration `json:"read_timeout"`
 	WriteTimeout xtime.Duration `json:"write_timeout"`
 	IdleTimeout  xtime.Duration `json:"idle_timeout"`
+	Pwd string `json:"pwd"`
+	Num int `json:"num"`
 }
 
 // KafkaProducer kafka producer settings.
