@@ -125,3 +125,9 @@ type LogData struct {
 	Name string
 	Level string
 }
+
+type GameType struct {
+	Rtype int32
+	Eth   string
+	Count int32
+}
