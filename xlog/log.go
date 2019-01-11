@@ -2,7 +2,7 @@ package xlog
 
 import (
 	"bufio"
-	"jerry/common/hook"
+	"github.com/kafuluote/common/hook"
 	"fmt"
 	"github.com/lestrrat/go-file-rotatelogs"
 	"github.com/sirupsen/logrus"

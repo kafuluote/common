@@ -119,3 +119,9 @@ type MongoDB struct {
 type ES struct {
 	Addrs string
 }
+
+type LogData struct {
+	Path string
+	Name string
+	Level string
+}
