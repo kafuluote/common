@@ -1,7 +1,7 @@
 package errors
 
 import (
-	. "digicon/proto/common"
+	//. "digicon/proto/common"
 	goErrors "errors"
 	"os"
 )
@@ -18,7 +18,7 @@ func GetErrStatus(err interface{}) int {
 	case NormalErrorInterface:
 		return v.Status()
 	default:
-		return ERRCODE_NORMAL_ERROR
+		return 3
 	}
 }
 

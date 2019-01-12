@@ -3,7 +3,7 @@ package errors
 import (
 	"fmt"
 
-	. "digicon/proto/common"
+	//"ka"
 )
 
 // 系统错误接口
@@ -43,7 +43,7 @@ func NewSys(options ...interface{}) error {
 	for _, v := range options {
 		switch opt := v.(type) {
 		default:
-			status = ERRCODE_UNKNOWN
+			status = 0
 			simpleMsg = "系统错误"
 			fullMsg = fmt.Sprintf("系统错误: %v", opt)
 		}

@@ -1,7 +1,7 @@
 package errors
 
 import (
-	. "digicon/proto/common"
+	//. "digicon/proto/common"
 	"fmt"
 )
 
@@ -43,7 +43,7 @@ func NewNormal(options ...interface{}) error {
 
 	// 未指定错误码，使用默认错误码
 	if status == 0 {
-		status = ERRCODE_NORMAL_ERROR
+		status = 1
 	}
 
 	return &NormalError{
