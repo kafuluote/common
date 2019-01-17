@@ -34,7 +34,7 @@ func NewCommonErr(ret int32) error {
 
 }
 
-func (s *CommonErr) Error() string {
+func (s CommonErr) Error() string {
 	return s.Msg
 }
 

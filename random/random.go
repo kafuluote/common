@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+	"sync/atomic"
+	"crypto/md5"
+	"encoding/hex"
+	"strings"
 )
 
 func Random6dec() string {
@@ -60,6 +64,8 @@ func SetRegisterRandHeader() string {
 	}
 }
 
+var Ran int64
+
 func GenerateRangeNum(min, max int) int {
 	rand.Seed(time.Now().Unix())
 	randNum := rand.Intn(max - min) + min
@@ -70,7 +76,11 @@ func randomMoney(remainCount int64, remainMoney int64,minMoney int64,maxMoney in
 	if remainCount == 1 {
 		return remainMoney
 	}
-	rand.Seed(time.Now().UnixNano())
+
+	rand.Seed(time.Now().UnixNano()+Ran)
+	atomic.AddInt64(&Ran,1)
+	//rd := rand.New(rand.NewSource(time.Now().UnixNano()))
+
 	var min int64
 	min = minMoney
 
@@ -92,4 +102,82 @@ func RedPackage(count, money int64,minMoney int64,maxMoney int64) []int64 {
 		money -= m
 	}
 	return a
+}
+
+
+func RandomRangeArr(start int, end int, count int) []int {
+	//范围检查
+	if end < start || (end-start) < count {
+		return nil
+	}
+
+	//存放结果的slice
+	nums := make([]int, 0)
+	//随机数生成器，加入时间戳保证每次生成的随机数不一样
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for len(nums) < count {
+		//生成随机数
+		num := r.Intn((end - start)) + start
+
+		//查重
+		exist := false
+		for _, v := range nums {
+			if v == num {
+				exist = true
+				break
+			}
+		}
+
+		if !exist {
+			nums = append(nums, num)
+		}
+	}
+
+	return nums
+}
+
+
+func RandomRangeArr64(min, max int64, count int) []int64 {
+	s := make([]int64, 0)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < count; i++ {
+
+		rvaule := r.Int63n(max-min) + min
+		for j := 0; j < len(s); j++ {
+			if s[j] == rvaule {
+				continue
+			}
+		}
+		s = append(s, rvaule)
+	}
+	return s
+}
+
+
+func GenUserToken(uid int) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	n := r.Intn(1000000) + time.Now().Nanosecond()
+	srand := fmt.Sprintf("%d", n)
+	suid := fmt.Sprintf("%d", uid)
+	rr := suid + srand[2:]
+	return Md5(rr)
+}
+
+func Md5(str string) string {
+	h := md5.New()
+	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+
+func GetRemoteIp(r *http.Request) (ip string) {
+	ip = r.Header.Get("X-Real-Ip")
+	if ip == "" {
+		ip = r.RemoteAddr
+	}
+	ip = strings.Split(ip, ":")[0]
+	if len(ip) < 7 || ip == "127.0.0.1" {
+		ip = "localhost"
+	}
+	return
 }
