@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 	"crypto/md5"
 	"encoding/hex"
-	"strings"
+
 )
 
 func Random6dec() string {
@@ -170,14 +170,4 @@ func Md5(str string) string {
 }
 
 
-func GetRemoteIp(r *http.Request) (ip string) {
-	ip = r.Header.Get("X-Real-Ip")
-	if ip == "" {
-		ip = r.RemoteAddr
-	}
-	ip = strings.Split(ip, ":")[0]
-	if len(ip) < 7 || ip == "127.0.0.1" {
-		ip = "localhost"
-	}
-	return
-}
+

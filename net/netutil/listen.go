@@ -5,6 +5,8 @@ import (
 	"net"
 	"sync"
 	"sync/atomic"
+	"strings"
+	"net/http"
 )
 
 var (
@@ -68,4 +70,16 @@ func (l *limitListenerConn) Close() error {
 	err := l.Conn.Close()
 	l.once.Do(l.release)
 	return err
+}
+
+func GetRemoteIp(r *http.Request) (ip string) {
+	ip = r.Header.Get("X-Real-Ip")
+	if ip == "" {
+		ip = r.RemoteAddr
+	}
+	ip = strings.Split(ip, ":")[0]
+	if len(ip) < 7 || ip == "127.0.0.1" {
+		ip = "localhost"
+	}
+	return
 }
