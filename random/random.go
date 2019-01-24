@@ -72,6 +72,14 @@ func GenerateRangeNum(min, max int) int {
 	return randNum
 }
 
+func GenerateRangeNumInt64(min, max int64) int64 {
+	rand.Seed(time.Now().Unix())
+	randNum := rand.Int63n(max - min) + min
+	return randNum
+}
+
+
+
 func randomMoney(remainCount int64, remainMoney int64,minMoney int64,maxMoney int64) int64 {
 	if remainCount == 1 {
 		return remainMoney
@@ -81,15 +89,19 @@ func randomMoney(remainCount int64, remainMoney int64,minMoney int64,maxMoney in
 	atomic.AddInt64(&Ran,1)
 	//rd := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	var min int64
-	min = minMoney
+
 
 	max := remainMoney / remainCount * 2
 	if max>maxMoney-minMoney {
 		max = maxMoney-minMoney
 	}
-
-	money := rand.Int63n(max) + min
+	if max==0 {
+		panic(fmt.Sprintf("null count %d",remainCount))
+	}
+	money := rand.Int63n(max)
+	if money<minMoney {
+		money=minMoney
+	}
 	return money
 }
 
