@@ -3,7 +3,7 @@ package itime
 import (
 	"strconv"
 	"time"
-	)
+)
 
 func GetCurentYearMonthString() string {
 	timeNow := time.Now()
@@ -37,7 +37,6 @@ func GetLastYearMonthString() string {
 	yearMonth += strconv.Itoa(lastMonth)
 	return yearMonth
 }
-
 
 /*
 * 函数名

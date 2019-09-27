@@ -58,3 +58,10 @@ func CreateOrderId(userId uint64, tokenId int32) (orderId string) {
 	orderId = buffer.String()
 	return
 }
+
+func Sha256(data string) []byte {
+	h := sha256.New()
+	h.Write([]byte(data))
+	bs := h.Sum(nil)
+	return bs
+}

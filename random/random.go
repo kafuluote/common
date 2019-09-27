@@ -1,13 +1,12 @@
 package random
 
 import (
-	"fmt"
-	"math/rand"
-	"time"
-	"sync/atomic"
 	"crypto/md5"
 	"encoding/hex"
-
+	"fmt"
+	"math/rand"
+	"sync/atomic"
+	"time"
 )
 
 func Random6dec() string {
@@ -68,54 +67,52 @@ var Ran int64
 
 func GenerateRangeNum(min, max int) int {
 	rand.Seed(time.Now().Unix())
-	randNum := rand.Intn(max - min) + min
+	if max == min {
+		panic(max)
+	}
+	randNum := rand.Intn(max-min) + min
 	return randNum
 }
 
 func GenerateRangeNumInt64(min, max int64) int64 {
 	rand.Seed(time.Now().Unix())
-	randNum := rand.Int63n(max - min) + min
+	randNum := rand.Int63n(max-min) + min
 	return randNum
 }
 
-
-
-func randomMoney(remainCount int64, remainMoney int64,minMoney int64,maxMoney int64) int64 {
+func randomMoney(remainCount int64, remainMoney int64, minMoney int64, maxMoney int64) int64 {
 	if remainCount == 1 {
 		return remainMoney
 	}
 
-	rand.Seed(time.Now().UnixNano()+Ran)
-	atomic.AddInt64(&Ran,1)
+	rand.Seed(time.Now().UnixNano() + Ran)
+	atomic.AddInt64(&Ran, 1)
 	//rd := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-
-
 	max := remainMoney / remainCount * 2
-	if max>maxMoney-minMoney {
-		max = maxMoney-minMoney
+	if max > maxMoney-minMoney {
+		max = maxMoney - minMoney
 	}
-	if max==0 {
-		panic(fmt.Sprintf("null count %d",remainCount))
+	if max == 0 {
+		panic(fmt.Sprintf("null count %d,%d,%d,%d", minMoney, maxMoney, remainMoney, remainCount))
 	}
 	money := rand.Int63n(max)
-	if money<minMoney {
-		money=minMoney
+	if money < minMoney {
+		money = minMoney
 	}
 	return money
 }
 
-func RedPackage(count, money int64,minMoney int64,maxMoney int64) []int64 {
+func RedPackage(count, money int64, minMoney int64, maxMoney int64) []int64 {
 	a := make([]int64, 0)
 	var i int64
 	for i = 0; i < count; i++ {
-		m := randomMoney(count-i, money,minMoney, maxMoney )
+		m := randomMoney(count-i, money, minMoney, maxMoney)
 		a = append(a, m)
 		money -= m
 	}
 	return a
 }
-
 
 func RandomRangeArr(start int, end int, count int) []int {
 	//范围检查
@@ -148,7 +145,6 @@ func RandomRangeArr(start int, end int, count int) []int {
 	return nums
 }
 
-
 func RandomRangeArr64(min, max int64, count int) []int64 {
 	s := make([]int64, 0)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -165,7 +161,6 @@ func RandomRangeArr64(min, max int64, count int) []int64 {
 	return s
 }
 
-
 func GenUserToken(uid int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	n := r.Intn(1000000) + time.Now().Nanosecond()
@@ -180,6 +175,3 @@ func Md5(str string) string {
 	h.Write([]byte(str))
 	return hex.EncodeToString(h.Sum(nil))
 }
-
-
-

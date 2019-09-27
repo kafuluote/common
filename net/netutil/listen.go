@@ -3,10 +3,10 @@ package netutil
 import (
 	"errors"
 	"net"
+	"net/http"
+	"strings"
 	"sync"
 	"sync/atomic"
-	"strings"
-	"net/http"
 )
 
 var (

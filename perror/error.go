@@ -1,8 +1,8 @@
 package perror
 
 import (
-	"log"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 var errMsgDict = make(map[int32]string)
@@ -38,12 +38,9 @@ func (s CommonErr) Error() string {
 	return s.Msg
 }
 
-
-
 var ERR_CODE_RET = "code"
 var ERR_CODE_MESSAGE = "msg"
 var RET_DATA = "data"
-
 
 type PublicErrorType struct {
 	ret  gin.H
@@ -64,6 +61,35 @@ func (s *PublicErrorType) init() {
 	ret[ERR_CODE_MESSAGE] = 0
 	s.ret = ret
 	s.data = make(map[string]interface{}, 0)
+}
+
+func (s *PublicErrorType) GetErrCode() int32 {
+	g, ok := s.ret[ERR_CODE_RET]
+	if ok {
+		e, ok := g.(int32)
+		if ok {
+			return e
+		}
+
+		r, ok := g.(int)
+		if ok {
+			return int32(r)
+		}
+		/*
+			k:=reflect.TypeOf(g)
+			switch k.(type) {
+			case int:
+				return g.(int)
+			case int32:
+				return g.(int32)
+			default:
+				panic(k)
+			}
+		*/
+
+		panic("err type")
+	}
+	return 0
 }
 
 //设置错误代码，如果有自定义错误信息填写err_msg参数

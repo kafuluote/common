@@ -34,4 +34,3 @@ func UnicodeEncode(rs string) string {
 	}
 	return json
 }
-

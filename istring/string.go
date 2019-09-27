@@ -29,4 +29,3 @@ func Substr(str string, start int, length int) string {
 
 	return string(rs[start:end])
 }
-

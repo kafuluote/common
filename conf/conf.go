@@ -49,11 +49,12 @@ type ConfDiscovery struct {
 }
 
 type ServiceDiscoveryServer struct {
-	ServiceName string         `json:"service_name"`
-	RPCAddr     string         `json:"rpc_addr"`
-	ConsulAddr  string         `json:"consul_addr"`
-	Interval    xtime.Duration `json:"interval"`
-	TTL         xtime.Duration `json:"ttl"`
+	ServiceName string `json:"service_name"`
+	WebName     string `json:"web_name"`
+	//RPCAddr     string         `json:"rpc_addr"`
+	RegistryAddr string         `json:"registry_addr"`
+	Interval     xtime.Duration `json:"interval"`
+	TTL          xtime.Duration `json:"ttl"`
 }
 
 type ServiceDiscoveryClient struct {
@@ -76,6 +77,7 @@ type Zookeeper struct {
 }
 
 // Redis client settings.
+/*
 type Redis struct {
 	Name         string         `json:"name"`
 	Proto        string         `json:"proto"`
@@ -88,6 +90,20 @@ type Redis struct {
 	IdleTimeout  xtime.Duration `json:"idle_timeout"`
 	Pwd string `json:"pwd"`
 	Num int `json:"num"`
+}
+*/
+type Redis struct {
+	Name         string `json:"name"`
+	Proto        string `json:"proto"`
+	Addr         string `json:"addr"`
+	Active       int    `json:"active"`
+	Idle         int    `json:"idle"`
+	DialTimeout  int64  `json:"dial_timeout"`
+	ReadTimeout  int64  `json:"read_timeout"`
+	WriteTimeout int64  `json:"write_timeout"`
+	IdleTimeout  int64  `json:"idle_timeout"`
+	Pwd          string `json:"pwd"`
+	Num          int    `json:"num"`
 }
 
 // KafkaProducer kafka producer settings.
@@ -123,8 +139,8 @@ type ES struct {
 }
 
 type LogData struct {
-	Path string
-	Name string
+	Path  string
+	Name  string
 	Level string
 }
 
