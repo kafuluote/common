@@ -4,6 +4,8 @@ var (
 	ImproveConf = `package conf
 
 import (
+	"encoding/json"
+
 	"github.com/kafuluote/common/conf"
 	"github.com/zouyx/agollo"
 )
@@ -14,6 +16,7 @@ type AppConfig struct {
 	Registry conf.ServiceDiscoveryServer "json:'registry'"
 	Redis    conf.Redis                  "json:'redis'"
 	Mysql    conf.MySQL                  "json:'mysql'"
+	Trace    string  					 "json:'trace_address'"
 }
 
 func NewAppConfig() *AppConfig {
@@ -34,6 +37,15 @@ func LoadConf() {
 	if err != nil {
 		panic(err.Error())
 	}
+
+	d := agollo.GetStringValue("registry", "")
+
+	err = json.Unmarshal([]byte(d), &Config.Registry)
+	if err != nil {
+		panic(err.Error())
+	}
+	
+	Config.Trace = agollo.GetStringValue("trace_address", "localhost:6831")
 
 	go lookup()
 }

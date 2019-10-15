@@ -52,9 +52,9 @@ type ServiceDiscoveryServer struct {
 	ServiceName string `json:"service_name"`
 	WebName     string `json:"web_name"`
 	//RPCAddr     string         `json:"rpc_addr"`
-	RegistryAddr string         `json:"registry_addr"`
-	Interval     xtime.Duration `json:"interval"`
-	TTL          xtime.Duration `json:"ttl"`
+	RegistryAddr string `json:"registry_addr"`
+	Interval     int64  `json:"interval"`
+	TTL          int64  `json:"ttl"`
 }
 
 type ServiceDiscoveryClient struct {

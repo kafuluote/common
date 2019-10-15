@@ -4,15 +4,22 @@ var (
 	ImproveHttp = `package http
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/registry/consul"
 	"github.com/micro/go-micro/web"
+	"github.com/micro/go-micro/registry"
+	"github.com/opentracing/opentracing-go"
+	"github.com/micro/go-micro/registry/consul"
+	"github.com/Allenxuxu/microservices/lib/tracer"
+	"github.com/Allenxuxu/microservices/lib/wrapper/tracer/opentracing/gin2micro"
 	log "github.com/sirupsen/logrus"
 
 	"{{.Dir}}/conf"
 	"{{.Dir}}/http/controller"
 )
+
+const name = "go.micro.api.{{.Alias}}"
 
 func initRouter() *gin.Engine {
 	r := gin.Default()
@@ -23,10 +30,21 @@ func initRouter() *gin.Engine {
 }
 
 func InitHttpServer() {
+	gin2micro.SetSamplingFrequency(50)
+	t, io, err := tracer.NewTracer(name, conf.Config.Trace)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer io.Close()
+
+	opentracing.SetGlobalTracer(t)
+
 
 	service := web.NewService(
 		web.Name("go.micro.api.{{.Alias}}"),
 		web.Registry(consul.NewRegistry(registry.Addrs(conf.Config.Registry.RegistryAddr))),
+		web.RegisterTTL(time.Second*15),
+		web.RegisterInterval(time.Second*10),
 	)
 
 	service.Init()
@@ -41,8 +59,7 @@ func InitHttpServer() {
 
 `
 
-
-	ImproveController=`package controller
+	ImproveController = `package controller
 
 import (
 	"fmt"

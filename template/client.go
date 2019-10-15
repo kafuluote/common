@@ -1,19 +1,17 @@
 package template
 
 var (
-	ImproveClient=`package rpc
-
-import "{{.Dir}}/rpc/client"
+	ImproveClient = `package client
 
 var InnerService *RPCClient
 
 type RPCClient struct {
-	{{title .Alias}}Con *client.{{title .Alias}}RPCCli
+	{{title .Alias}}Con *{{title .Alias}}RPCCli
 }
 
 func NewRPCClient() (c *RPCClient) {
 	return &RPCClient{
-		{{title .Alias}}Con:client.New{{title .Alias}}RPCCli(),
+		{{title .Alias}}Con:New{{title .Alias}}RPCCli(),
 	}
 }
 
@@ -21,7 +19,7 @@ func InitInnerService() {
 	InnerService = NewRPCClient()
 }`
 
-	ImproveIp=`package client
+	ImproveIp = `package client
 
 import (
 	"{{.Dir}}/conf"

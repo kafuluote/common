@@ -1,7 +1,7 @@
 package template
 
 var (
-	ImproveRpcServer=`package rpc
+	ImproveRpcServer = `package rpc
 
 import (
 	"fmt"
@@ -12,12 +12,24 @@ import (
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/registry/consul"
+	"github.com/Allenxuxu/microservices/lib/tracer"
 
 	proto "{{.Dir}}/proto/{{.Alias}}"
 	log "github.com/sirupsen/logrus"
+
+	ocplugin "github.com/micro/go-plugins/wrapper/trace/opentracing"
+	opentracing "github.com/opentracing/opentracing-go"
 )
 
+const name = "go.micro.srv.hello"
+
 func RPCServerInit() {
+	t, io, err := tracer.NewTracer(name, conf.Config.Trace)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer io.Close()
+	opentracing.SetGlobalTracer(t)
 
 	service := micro.NewService(
 		micro.Name("go.micro.srv.{{.Alias}}"),
@@ -25,6 +37,7 @@ func RPCServerInit() {
 		micro.RegisterInterval(time.Duration(conf.Config.Registry.Interval)),
 		micro.Registry(consul.NewRegistry(registry.Addrs(conf.Config.Registry.RegistryAddr))),
 		micro.Version("latest"),
+		micro.WrapHandler(ocplugin.NewHandlerWrapper(opentracing.GlobalTracer())),
 	)
 	service.Init()
 
@@ -39,7 +52,7 @@ func RPCServerInit() {
 
 `
 
-	ImproveRpcHandler= `package handler
+	ImproveRpcHandler = `package handler
 
 import (
 	"context"
