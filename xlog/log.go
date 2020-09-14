@@ -11,7 +11,7 @@ import (
 )
 
 func InitLogger(path, name, level string) {
-	baseLogPath := fmt.Sprintf("%s%s", path, name)
+	baseLogPath := fmt.Sprintf("%s/%s", path, name)
 	writer, err := rotatelogs.New(
 		baseLogPath+"_%Y%m%d.log",
 		rotatelogs.WithLinkName(baseLogPath),      // 生成软链，指向最新日志文件

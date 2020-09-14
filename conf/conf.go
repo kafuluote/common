@@ -96,6 +96,7 @@ type Redis struct {
 	Name         string `json:"name"`
 	Proto        string `json:"proto"`
 	Addr         string `json:"addr"`
+	Ttl          int32 `json:"ttl"`
 	Active       int    `json:"active"`
 	Idle         int    `json:"idle"`
 	DialTimeout  int64  `json:"dial_timeout"`
@@ -148,4 +149,39 @@ type GameType struct {
 	Rtype int32
 	Eth   string
 	Count int32
+}
+
+//短信
+type Sms struct {
+	Account string
+	Pwd string
+	SmsUrl  string
+	Title string
+}
+
+//邮箱
+type Email struct {
+	AppKey string
+	SecretKey string
+	Title string
+	Subject string
+	Alias string
+}
+
+//极验
+type Gree struct {
+	Key string
+	Id string
+}
+
+//实名认证
+type Auth struct {
+	Id string
+	Key string
+}
+
+type Log struct {
+	LogPath  string
+	LogLevel string
+	LogName  string
 }
