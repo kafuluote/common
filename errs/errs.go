@@ -1,33 +1,35 @@
 package errs
 
-import "github.com/gin-gonic/gin"
+import "net/http"
 
 var ERR_CODE_RET = "code"
 var ERR_CODE_MESSAGE = "msg"
 var RET_DATA = "data"
 
-var message map[int32]string
+var message map[int]string
 
 const (
 	ERRCODE_SUCCESS = 0
 	ERRCODE_UNKNOWN = 1
 	ERRCODE_PARAM   = 2
 )
+type H map[string]interface{}
 
 func init() {
-	message = make(map[int32]string, 0)
+	message = make(map[int]string, 0)
 	message[ERRCODE_SUCCESS] = "成功"
 	message[ERRCODE_UNKNOWN] = "未知错误"
 	message[ERRCODE_PARAM] = "参数错误"
 
 }
 
-func getErrorMessage(code int32) string {
+
+func getErrorMessage(code int) string {
 	return message[code]
 }
 
 type PublicErrorType struct {
-	ret  gin.H
+	ret  H
 	data map[string]interface{}
 }
 
@@ -40,7 +42,7 @@ func NewPublciError() *PublicErrorType {
 
 //初始化操作
 func (s *PublicErrorType) init() {
-	var ret = gin.H{}
+	var ret = H{}
 	ret[ERR_CODE_RET] = 0
 	ret[ERR_CODE_MESSAGE] = 0
 	s.ret = ret
@@ -48,17 +50,18 @@ func (s *PublicErrorType) init() {
 }
 
 //设置错误代码，如果有自定义错误信息填写err_msg参数
-func (s *PublicErrorType) SetErrCode(code int32, err_msg ...string) {
+func (s *PublicErrorType) SetErrCode(code int, err_msg ...string) {
 	s.ret[ERR_CODE_RET] = code
 
-	if len(err_msg) > 0 {
-		if err_msg[0] == "" {
-			s.ret[ERR_CODE_MESSAGE] = getErrorMessage(code)
-		} else {
-			s.ret[ERR_CODE_MESSAGE] = err_msg[0]
+	if len(err_msg)>0 {
+		s.ret[ERR_CODE_MESSAGE] = err_msg[0]
+	}else{
+		if code>512 {
+			s.ret[ERR_CODE_MESSAGE]=getErrorMessage(code)
+		}else{
+			s.ret[ERR_CODE_MESSAGE]=http.StatusText(code)
 		}
-	} else {
-		s.ret[ERR_CODE_MESSAGE] = getErrorMessage(code)
+
 	}
 }
 
@@ -68,7 +71,7 @@ func (s *PublicErrorType) SetDataSection(key string, value interface{}) {
 }
 
 //返回最终的数据
-func (s *PublicErrorType) GetResult() gin.H {
+func (s *PublicErrorType) GetResult() H {
 	s.ret[RET_DATA] = s.data
 	return s.ret
 }
