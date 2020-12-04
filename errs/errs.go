@@ -1,10 +1,10 @@
 package errs
 
-import "github.com/gin-gonic/gin"
-
 var ERR_CODE_RET = "code"
 var ERR_CODE_MESSAGE = "msg"
 var RET_DATA = "data"
+
+type H map[string]interface{}
 
 var message map[int32]string
 
@@ -27,7 +27,7 @@ func getErrorMessage(code int32) string {
 }
 
 type PublicErrorType struct {
-	ret  gin.H
+	ret  H
 	data map[string]interface{}
 }
 
@@ -40,7 +40,7 @@ func NewPublciError() *PublicErrorType {
 
 //初始化操作
 func (s *PublicErrorType) init() {
-	var ret = gin.H{}
+	var ret = H{}
 	ret[ERR_CODE_RET] = 0
 	ret[ERR_CODE_MESSAGE] = 0
 	s.ret = ret
@@ -68,7 +68,7 @@ func (s *PublicErrorType) SetDataSection(key string, value interface{}) {
 }
 
 //返回最终的数据
-func (s *PublicErrorType) GetResult() gin.H {
+func (s *PublicErrorType) GetResult() H {
 	s.ret[RET_DATA] = s.data
 	return s.ret
 }
