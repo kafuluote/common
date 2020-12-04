@@ -1,7 +1,14 @@
 package template
 
 var (
-	Cicd = `stages:
+	Cicd = `
+variables:
+    AlI_REGISTER_ACCOUNT: ${AliRegisterAccount}
+    AlI_REGISTER_PASSWORD: ${AliRegisterPassword}
+    IMAGE_VERSION: {{.Alias}}:v1.0
+    K8S_ROLE_TOKEN: ${K8sRoleToken}
+    K8S_ROLE_NAME: ${K8sRoleName}
+stages:
   - build
   - push_image
   - deploy
@@ -9,7 +16,7 @@ build:
   stage: build
   image: docker:stable
   script:
-    - docker build  -t registry.cn-hangzhou.aliyuncs.com/kafuluote/{{.Alias}}:v1.0 .
+    - docker build  -t registry.cn-hangzhou.aliyuncs.com/kafuluote/$IMAGE_VERSION .
   allow_failure: false
   only:
     - dev
@@ -37,11 +44,11 @@ deploy:
   image: registry.cn-hangzhou.aliyuncs.com/kafuluote/kubectl:v1.0
   stage: deploy
   script:
-    - kubectl config set-credentials dashboard-admin-token-gzgqd --token eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4tZ3pncWQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMGFkYmVlNTEtOTJiMS00YjU3LThjODctZDU4MmI4MDQ5ZmU5Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.GazzLI1Pgc6mfz6EreEvaVKvGcSw6a_Y2OE4N3hYd0_B7D-gvlwIVgniVtDRpRd5QQE0uv-QANmk5Mmqkr4jgjGL6gDZ04QKhJnJAU_XBouugTBzI0-cUOynQqF_aZXsL305dT-DG_d3lrMJSsuc50fUQlsjeitQ3UDqJ_mAgsNCGlOR4emMPYhwyuKw3qWWSgE-I1VyLGpMzE6CrISSD_tyq3Vjr-M3lQPKzaKo_5R0rdGnEZXYgkZa9DaQDDj1_FXoWom_u-yA8k0Pash4PRu2sQ3uoG_eHuwBt3ggTCnm9Mkm1U3AMpyTGMrrbeg3V3TIBg5evkJmd55zqzc9LQ
+    - kubectl config set-credentials $K8S_ROLE_NAME  --token $K8S_ROLE_TOKEN
     - kubectl config set-cluster ts --server https://192.168.70.128:6443
-    - kubectl config set-context dashboard-admin-token-gzgqd@ts/kong --user dashboard-admin-token-gzgqd --cluster ts --namespace kong
-    - kubectl config use-context dashboard-admin-token-gzgqd@ts/kong
-    - kubectl set image -n kong deployments/{{.Alias}} {{.Alias}}=registry.cn-hangzhou.aliyuncs.com/kafuluote/{{.Alias}}:v1.0  --insecure-skip-tls-verify
+    - kubectl config set-context $K8S_ROLE_NAME@ts/kong --user $K8S_ROLE_NAME --cluster ts --namespace kong
+    - kubectl config use-context $K8S_ROLE_NAME@ts/kong
+    - kubectl set image -n kong deployments/{{.Alias}} {{.Alias}}=registry.cn-hangzhou.aliyuncs.com/kafuluote/$IMAGE_VERSION  --insecure-skip-tls-verify
   only:
     - master`
 

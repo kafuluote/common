@@ -18,7 +18,7 @@ type {{title .Alias}}RPCCli struct {
 
 func New{{title .Alias}}RPCCli() (t *{{title .Alias}}RPCCli) {
 	service := micro.NewService(
-		micro.Name("go.micro.srv.{{.Alias}}"),
+		micro.Name("go.micro.cli.{{.Alias}}"),
 		micro.RegisterTTL(time.Duration(conf.Config.Registry.TTL)),
 		micro.RegisterInterval(time.Duration(conf.Config.Registry.Interval)),
 		micro.Registry(consul.NewRegistry(registry.Addrs(conf.Config.Registry.RegistryAddr))),

@@ -4,8 +4,10 @@ var (
 	ImproveRpcServer2 = `package rpc
 
 import (
+	"context"
 	"fmt"
 	"time"
+	"sync"
 
 	"{{.Dir}}/conf"
 	"{{.Dir}}/rpc/handler"
@@ -20,13 +22,16 @@ import (
 	proto "{{.Dir}}/proto/{{.Alias}}"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/micro/cli/v2"
 	ocplugin "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
 	opentracing "github.com/opentracing/opentracing-go"
+
+	"github.com/kafuluote/common/xlog"
 )
 
 const name = "go.micro.srv.hello"
 
-func RPCServerInit() {
+func RPCServerInit(ctx context.Context,tw *sync.WaitGroup) {
 	t, io, err := tracer.NewTracer(name, conf.Config.Trace)
 	if err != nil {
 		log.Fatal(err)
@@ -43,17 +48,41 @@ func RPCServerInit() {
 		micro.Version("latest"),
 		micro.Broker(nsq.NewBroker(broker.Addrs("my-nsq:4150"))),
 		micro.WrapHandler(ocplugin.NewHandlerWrapper(opentracing.GlobalTracer())),
+		micro.Context(ctx),
+		micro.Flags(
+			&cli.StringFlag{
+				Name:  "log_path",
+				Usage: "This is a string flag",
+				DefaultText:"./log",
+			},
+			&cli.StringFlag{
+				Name:  "log_level",
+				Usage: "This is an int flag",
+				DefaultText:"debug",
+			},
+
+		),
 	)
 
-	service.Init()
+	service.Init(		
+        micro.Action(func(c *cli.Context) error {
+
+			xlog.InitLogger(c.String("log_path"),"{{.Alias}}",c.String("log_level"))
+			return nil
+		}),
+     )
 
 	proto.Register{{title .Alias}}Handler(service.Server(), new(handler.{{title .Alias}}))
+
+	defer func() {
+		tw.Done()
+	}()
 
 	if err := service.Run(); err != nil {
 		fmt.Println(err.Error())
 		log.Fatal(err)
+		return
 	}
-
 }
 
 `

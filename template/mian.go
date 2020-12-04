@@ -7,8 +7,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"context"
+	"sync"
 
-	"github.com/kafuluote/common/xlog"
 	"{{.Dir}}/conf"
 	"{{.Dir}}/dao"
 	"{{.Dir}}/http"
@@ -17,34 +18,30 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+
 func init() {
+
 	conf.LoadConf()
-
-	path := os.Getenv("MICRO_LOG_PATH")
-	if len(path) == 0 {
-		panic("please config MICRO_LOG_PATH")
-		return
-	}
-	level := os.Getenv("MICRO_LOG_LEVEL")
-	if len(level) == 0 {
-		panic("please config MICRO_LOG_LEVEL")
-		return
-	}
-
-	xlog.InitLogger(path, "{{.Alias}}.log", level)
 }
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	waiter := &sync.WaitGroup{}
+	waiter.Add(1)
+
 	go dao.InitDao()
 	go http.InitHttpServer()
-	go rpc.RPCServerInit()
+	go rpc.RPCServerInit(ctx,waiter)
 
 	quitChan := make(chan os.Signal)
 	signal.Notify(quitChan,
 		syscall.SIGINT,
 		syscall.SIGTERM,
 	)
+	log.Infof("server start end")
 	sig := <-quitChan
+	cancel()
+	waiter.Wait()
 	log.Infof("server close by sig %s", sig.String())
 }
 `

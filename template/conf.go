@@ -29,7 +29,7 @@ func LoadConf() {
 			AppId:         "10001",
 			Cluster:       "default",
 			NamespaceName: "TEST1.head",
-			Ip:            "192.168.238.128:8080",
+			Ip:            "my-apollo:8080",
 		}, nil
 	})
 
