@@ -1,7 +1,7 @@
 package model
 
 import (
-	"digicon/common/xtime"
+	"common/xtime"
 )
 
 type ExceptionMsg struct {
