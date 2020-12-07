@@ -1,7 +1,7 @@
 package model
 
 import (
-	"common/xtime"
+	"github.com/kafuluote/common/xtime"
 )
 
 type ExceptionMsg struct {
