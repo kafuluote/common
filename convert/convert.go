@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+
 	"github.com/shopspring/decimal"
 	//"math/big"
+	"github.com/liudng/godump"
 )
 
 func ByteToInt32(b []byte) (x uint32) {
@@ -20,6 +22,13 @@ func ByteToInt64(b []byte) (x int64) {
 	b_buf = bytes.NewBuffer([]byte{})
 	binary.Write(b_buf, binary.BigEndian, x)
 	return
+}
+
+//两个int64 相加
+func Int64AddInt64(a, b int64) (int64, error) {
+	aa := decimal.New(a, 0)
+	bb := decimal.New(b, 0)
+	return aa.Add(bb).IntPart(), nil
 }
 
 func Int64ToInt64By8Bit(b int64) int64 {
@@ -40,6 +49,11 @@ func Int64ToStringBy8Bit(b int64) string {
 	return r.String()
 }
 
+func Int64ToString(b int64) string {
+	a := decimal.New(b, 0)
+	return a.String()
+}
+
 func StringToStringBy8Bit(b string) string {
 	a, err := decimal.NewFromString(b)
 	if err != nil {
@@ -47,6 +61,12 @@ func StringToStringBy8Bit(b string) string {
 	}
 	r := a.Div(decimal.New(100000000, 0))
 	return r.String()
+}
+
+func StringAddString(a, b string) string {
+	c, _ := decimal.NewFromString(a)
+	d, _ := decimal.NewFromString(b)
+	return c.Add(d).String()
 }
 
 //0.00001001
@@ -69,6 +89,7 @@ func Int64MulInt64By8Bit(a int64, b int64) int64 {
 	m := dd.Mul(dp)
 	d := decimal.New(100000000, 0)
 	n := m.Div(d)
+	godump.Dump(n.String())
 	return n.IntPart()
 }
 
@@ -204,4 +225,14 @@ func Int64MulInt64DivInt64By8Bit(a, b, c int64) string {
 	dd := decimal.New(100000000, 0)
 
 	return da.Mul(db).Div(dc).Div(dd).Round(2).String()
+}
+
+func Int64SubInt64(a int64, b int64) string {
+	dd := decimal.New(a, 0)
+	dp := decimal.New(b, 0)
+	d := decimal.New(100000000, 0)
+
+	t := dd.Sub(dp).Div(d).String()
+
+	return t
 }
