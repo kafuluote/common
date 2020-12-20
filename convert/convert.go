@@ -237,9 +237,9 @@ func Int64SubInt64(a int64, b int64) string {
 	return t
 }
 
-func Int64ToStringDiv8Bit(a int) string {
+func Int64ToStringDiv8Bit(a int64) string {
 
-	dp, err := decimal.NewFromString(a)
+	dp, err := decimal.New(a)
 	if err != nil {
 		return ""
 	}
