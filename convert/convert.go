@@ -239,10 +239,7 @@ func Int64SubInt64(a int64, b int64) string {
 
 func Int64ToStringDiv8Bit(a int64) string {
 
-	dp, err := decimal.New(a)
-	if err != nil {
-		return ""
-	}
+	dp := decimal.New(a, 0)
 
 	d := decimal.New(100000000, 0)
 	t := dp.Div(d)
