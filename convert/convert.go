@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	"github.com/shopspring/decimal"
-	//"math/big"
-	"github.com/liudng/godump"
 )
 
 func ByteToInt32(b []byte) (x uint32) {
@@ -91,7 +89,6 @@ func Int64MulInt64By8Bit(a int64, b int64) int64 {
 	m := dd.Mul(dp)
 	d := decimal.New(100000000, 0)
 	n := m.Div(d)
-	godump.Dump(n.String())
 	return n.IntPart()
 }
 
@@ -262,7 +259,7 @@ func findkey(in string) int {
 }
 
 // 任意进制转10进制
-func anyToDecimal(num string, n int) int {
+func AnyToDecimal(num string, n int) int {
 	var new_num float64
 	new_num = 0.0
 	nNum := len(strings.Split(num, "")) - 1
